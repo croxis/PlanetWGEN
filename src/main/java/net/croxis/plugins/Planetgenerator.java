@@ -76,21 +76,25 @@ public class Planetgenerator implements VanillaGenerator{
 
 	public void generate(CuboidBlockMaterialBuffer blockData, int chunkX,
 			int chunkY, int chunkZ, World world) {
+		long time = System.currentTimeMillis();
 		if (chunkZ == 1 && chunkX == 0 && chunkY == 0){
 			System.out.println("Yes 0,0,1 I exist");
 		} else if (chunkZ == 6 && chunkX == 3 && chunkY == 0){
 			System.out.println("Yes  3,0,6 I exist");
 		}
+		//Skip chunks outside bounding box. Give box some room to spare.
 		if (Math.abs(chunkX) + 1 > crust * scale / 16.0)
-			if (Math.abs(chunkZ) + 1 > crust * scale / 16.0){
-				System.out.println("Skipping the following chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
-				return;
-			}
+			if (Math.abs(chunkZ) + 1 > crust * scale / 16.0)
+				if(Math.abs(chunkY) + 1 > crust * scale / 256.0){
+					System.out.println("Skipping the following chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
+					return;
+				}
 		Vector3 blockSpot = new Vector3(0, 0, 0);
 		double distance = 0;
 		int trueX = 0;
 		int trueZ = 0;
 		int trueY = 0;
+		
 		for (x = 0; x < 16; x++){
 			for (z = 0; z < 16; z++){
 				//for (y = 0; y < 256; y++){
@@ -145,7 +149,7 @@ public class Planetgenerator implements VanillaGenerator{
 			else
 				System.out.println("Boo");
 		}*/
-		
+		System.out.println("Generation time for Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ) + ": " + Long.toString(System.currentTimeMillis() - time) + " ms");
 	}
 
 	public int[][] getSurfaceHeight(World world, int chunkX, int chunkZ) {

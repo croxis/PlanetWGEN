@@ -36,8 +36,6 @@
  */
 package net.croxis.plugins;
 
-import java.util.Random;
-
 import org.spout.api.generator.GeneratorPopulator;
 import org.spout.api.generator.Populator;
 import org.spout.api.generator.biome.BiomeSelector;
@@ -45,13 +43,11 @@ import org.spout.api.geo.World;
 import org.spout.api.geo.cuboid.Chunk;
 import org.spout.api.geo.discrete.Point;
 import org.spout.api.math.Vector3;
-import org.spout.api.util.LogicUtil;
 import org.spout.api.util.cuboid.CuboidBlockMaterialBuffer;
 import org.spout.vanilla.plugin.material.VanillaMaterials;
 import org.spout.vanilla.plugin.material.block.Liquid;
 import org.spout.vanilla.plugin.world.generator.VanillaGenerator;
 import org.spout.vanilla.plugin.world.generator.VanillaGenerators;
-import org.spout.vanilla.plugin.world.generator.biome.VanillaBiomes;
 import org.spout.vanilla.plugin.world.generator.normal.NormalGenerator;
 
 public class Planetgenerator implements VanillaGenerator{
@@ -76,7 +72,14 @@ public class Planetgenerator implements VanillaGenerator{
 
 	public void generate(CuboidBlockMaterialBuffer blockData, int chunkX,
 			int chunkY, int chunkZ, World world) {
+		//if (true)
+		//	return;
 		long time = System.currentTimeMillis();
+		System.out.println("Starting Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
+		blockData.flood(VanillaMaterials.AIR);
+		//if (true)
+		//	return;
+		
 		if (chunkZ == 1 && chunkX == 0 && chunkY == 0){
 			System.out.println("Yes 0,0,1 I exist");
 		} else if (chunkZ == 6 && chunkX == 3 && chunkY == 0){
@@ -87,8 +90,9 @@ public class Planetgenerator implements VanillaGenerator{
 			if (Math.abs(chunkZ) + 1 > crust * scale / 16.0)
 				if(Math.abs(chunkY) + 1 > crust * scale / 256.0){
 					System.out.println("Skipping the following chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
-					return;
+					//return;
 				}
+		System.out.println("Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
 		Vector3 blockSpot = new Vector3(0, 0, 0);
 		double distance = 0;
 		int trueX = 0;
@@ -97,8 +101,9 @@ public class Planetgenerator implements VanillaGenerator{
 		
 		for (x = 0; x < 16; x++){
 			for (z = 0; z < 16; z++){
-				//for (y = 0; y < 256; y++){
 				for (y = 0; y < 256; y++){
+					
+					//System.out.println("Loop coords: " + Integer.toString(x) + ", " + Integer.toString(y) + ", " + Integer.toString(z));
 					trueX = x + chunkX * 16;
 					trueZ = z + chunkZ * 16;
 					trueY = y + (chunkY << 4);

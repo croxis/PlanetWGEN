@@ -1,0 +1,8 @@
+name: PlanetWGEN
+version: ${version}
+description: ${project.description}
+author: [ croxis ]
+depends: [Vanilla]
+main: net.croxis.plugins.PlanetWGEN
+load: STARTUP
+platform: SERVER

@@ -36,26 +36,18 @@
  */
 package net.croxis.plugins;
 
-import java.util.Set;
 
 import org.spout.api.UnsafeMethod;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
-import org.spout.api.command.CommandContext;
 import org.spout.api.command.CommandRegistrationsFactory;
-import org.spout.api.command.CommandSource;
 import org.spout.api.command.RootCommand;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
-import org.spout.api.command.annotated.Command;
-import org.spout.api.command.annotated.CommandPermissions;
 import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
 import org.spout.api.component.impl.ObserverComponent;
 import org.spout.api.entity.Entity;
-import org.spout.api.entity.Player;
-import org.spout.api.exception.CommandException;
-import org.spout.api.generator.GeneratorPopulator;
-import org.spout.api.generator.biome.Biome;
+import org.spout.api.exception.ConfigurationException;
 import org.spout.api.geo.LoadOption;
 import org.spout.api.geo.World;
 import org.spout.api.geo.cuboid.Chunk;
@@ -68,7 +60,7 @@ import org.spout.api.plugin.PluginLogger;
 import org.spout.api.plugin.ServiceManager;
 import org.spout.api.plugin.services.ProtectionService;
 import org.spout.api.util.FlatIterator;
-import org.spout.vanilla.plugin.VanillaPlugin;
+//import org.spout.vanilla.plugin.VanillaPlugin;
 
 import org.spout.vanilla.api.data.Difficulty;
 import org.spout.vanilla.api.data.Dimension;
@@ -94,11 +86,17 @@ public class PlanetWGEN extends CommonPlugin{
 		final RootCommand root = getEngine().getRootCommand();
 		root.addSubCommands(this, DebugCommands.class, commandRegFactory);
 		
+		getLogger().info("Enabled.");
 		
-		VanillaPlugin vanilla = (VanillaPlugin) this.getEngine().getPluginManager().getPlugin("Vanilla");
+		//VanillaPlugin vanilla = (VanillaPlugin) this.getEngine().getPluginManager().getPlugin("Vanilla");
 		World world = this.getEngine().loadWorld("world", new Planetgenerator());
 		
 		WorldConfigurationNode worldNode = VanillaConfiguration.WORLDS.get("world");
+		try {
+			worldNode.load();
+		} catch (ConfigurationException e1) {
+			e1.printStackTrace();
+		}
 
 		world.getDataMap().put(VanillaData.GAMEMODE, GameMode.get(worldNode.GAMEMODE.getString()));
 		world.getDataMap().put(VanillaData.DIFFICULTY, Difficulty.get(worldNode.DIFFICULTY.getString()));

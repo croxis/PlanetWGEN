@@ -77,14 +77,15 @@ public class Planetgenerator implements VanillaGenerator{
 	public void generate(CuboidBlockMaterialBuffer blockData, int chunkX,
 			int chunkY, int chunkZ, World world) {
 		if (chunkZ == 1 && chunkX == 0 && chunkY == 0){
-			System.out.println("Yes 001 I exist");
-		}
-		if (chunkZ == 6 && chunkX == 3 && chunkY == 0){
-			System.out.println("Yes  376 I exist");
+			System.out.println("Yes 0,0,1 I exist");
+		} else if (chunkZ == 6 && chunkX == 3 && chunkY == 0){
+			System.out.println("Yes  3,0,6 I exist");
 		}
 		if (Math.abs(chunkX) + 1 > crust * scale / 16.0)
-			if (Math.abs(chunkZ) + 1 > crust * scale / 16)
+			if (Math.abs(chunkZ) + 1 > crust * scale / 16.0){
+				System.out.println("Skipping the following chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
 				return;
+			}
 		Vector3 blockSpot = new Vector3(0, 0, 0);
 		double distance = 0;
 		int trueX = 0;
@@ -101,14 +102,16 @@ public class Planetgenerator implements VanillaGenerator{
 					distance = blockSpot.distance(center);
 					if (distance < icore * scale){
 						blockData.set(trueX, trueY, trueZ, VanillaMaterials.IRON_BLOCK);
-					} else if (distance < ocore * scale && distance > icore * scale)
+					} else if (distance <= ocore * scale && distance > icore * scale)
 						blockData.set(trueX, trueY, trueZ, VanillaMaterials.LAVA);
-					else if (distance < mantle * scale && distance > ocore * scale)
+					else if (distance <= mantle * scale && distance > ocore * scale)
 						blockData.set(trueX, trueY, trueZ, VanillaMaterials.NETHERRACK);
-					else if (distance < crust - 1 * scale && distance > mantle * scale)
+					else if (distance <= crust - 1 * scale && distance > mantle * scale)
 						blockData.set(trueX, trueY, trueZ, VanillaMaterials.STONE);
-					else if (distance < crust * scale && distance > crust -1 * scale)
+					else if (distance <= crust * scale && distance > crust -1 * scale)
 						blockData.set(trueX, trueY, trueZ, VanillaMaterials.DIRT);
+					else if (distance < crust * scale && distance > crust * scale - 1)
+						blockData.set(trueX, trueY, trueZ, VanillaMaterials.GRASS);
 					/*else if (chunkZ == 1 && chunkX == 0){
 						System.out.println("Error!");
 						System.out.println("Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
@@ -120,7 +123,7 @@ public class Planetgenerator implements VanillaGenerator{
 				}
 			}
 		}
-		if (chunkZ == 1 && chunkX == 0){
+		/*if (chunkZ == 1 && chunkX == 0){
 			System.out.println("Error!");
 			System.out.println("Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
 			System.out.println("Loop coords: " + Integer.toString(x) + ", " + Integer.toString(y) + ", " + Integer.toString(z));
@@ -137,9 +140,11 @@ public class Planetgenerator implements VanillaGenerator{
 				System.out.println("VanillaMaterials.STONE");
 			else if (distance < crust * scale && distance > crust -1 * scale)
 				System.out.println("VanillaMaterials.DIRT");
+			else if (distance < crust * scale && distance > crust * scale - 1)
+				System.out.println("VanillaMaterials.GRASS");
 			else
 				System.out.println("Boo");
-		}
+		}*/
 		
 	}
 

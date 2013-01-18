@@ -64,6 +64,7 @@ public class Planetgenerator implements VanillaGenerator{
 	int x = 0;
 	int y = 0;
 	int z = 0;
+	Vector3 blockSpot = new Vector3(0, 0, 0);
 	
 	//public Planetgenerator(){
 		// Precalculate max y values for a chunk
@@ -72,28 +73,22 @@ public class Planetgenerator implements VanillaGenerator{
 
 	public void generate(CuboidBlockMaterialBuffer blockData, int chunkX,
 			int chunkY, int chunkZ, World world) {
-		//if (true)
-		//	return;
 		long time = System.currentTimeMillis();
-		System.out.println("Starting Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
-		blockData.flood(VanillaMaterials.AIR);
-		//if (true)
-		//	return;
+		/*System.out.println("Starting Chunk: " 
+				+ Integer.toString(chunkX) + ", " 
+				+ Integer.toString(chunkY) + ", "
+				+ Integer.toString(chunkZ));*/
 		
-		if (chunkZ == 1 && chunkX == 0 && chunkY == 0){
-			System.out.println("Yes 0,0,1 I exist");
-		} else if (chunkZ == 6 && chunkX == 3 && chunkY == 0){
-			System.out.println("Yes  3,0,6 I exist");
-		}
-		//Skip chunks outside bounding box. Give box some room to spare.
-		if (Math.abs(chunkX) + 1 > crust * scale / 16.0)
-			if (Math.abs(chunkZ) + 1 > crust * scale / 16.0)
-				if(Math.abs(chunkY) + 1 > crust * scale / 256.0){
-					System.out.println("Skipping the following chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
+		if (chunkZ == 6 && chunkX == 3)
+			System.out.println("Yes  3, 6 I exist");
+		
+		//if (Math.abs(chunkX) + 1 > crust * scale / 16.0)
+		//	if (Math.abs(chunkZ) + 1 > crust * scale / 16.0)
+		//		if(Math.abs(chunkY) + 1 > crust * scale / 256.0){
+		//			System.out.println("Skipping the following chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
 					//return;
-				}
-		System.out.println("Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
-		Vector3 blockSpot = new Vector3(0, 0, 0);
+		//		}
+		
 		double distance = 0;
 		int trueX = 0;
 		int trueZ = 0;
@@ -154,7 +149,13 @@ public class Planetgenerator implements VanillaGenerator{
 			else
 				System.out.println("Boo");
 		}*/
-		System.out.println("Generation time for Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ) + ": " + Long.toString(System.currentTimeMillis() - time) + " ms");
+		
+		System.out.println("Generation time for Chunk: " 
+				+ Integer.toString(chunkX) + ", " 
+				+ Integer.toString(chunkY) + ", "
+				+ Integer.toString(chunkZ) + ": " 
+				+ Long.toString(System.currentTimeMillis() - time) + " ms");
+		
 	}
 
 	public int[][] getSurfaceHeight(World world, int chunkX, int chunkZ) {

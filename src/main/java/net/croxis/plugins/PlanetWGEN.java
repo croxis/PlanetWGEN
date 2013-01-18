@@ -36,7 +36,6 @@
  */
 package net.croxis.plugins;
 
-
 import org.spout.api.UnsafeMethod;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
@@ -47,6 +46,9 @@ import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
 import org.spout.api.component.impl.ObserverComponent;
 import org.spout.api.entity.Entity;
+import org.spout.api.event.EventHandler;
+import org.spout.api.event.Listener;
+import org.spout.api.event.player.PlayerJoinEvent;
 import org.spout.api.exception.ConfigurationException;
 import org.spout.api.geo.LoadOption;
 import org.spout.api.geo.World;
@@ -60,8 +62,6 @@ import org.spout.api.plugin.PluginLogger;
 import org.spout.api.plugin.ServiceManager;
 import org.spout.api.plugin.services.ProtectionService;
 import org.spout.api.util.FlatIterator;
-//import org.spout.vanilla.plugin.VanillaPlugin;
-
 import org.spout.vanilla.api.data.Difficulty;
 import org.spout.vanilla.api.data.Dimension;
 import org.spout.vanilla.api.data.GameMode;
@@ -75,9 +75,8 @@ import org.spout.vanilla.plugin.service.protection.SpawnProtection;
 import org.spout.vanilla.plugin.thread.SpawnLoader;
 import org.spout.vanilla.plugin.world.generator.VanillaGenerator;
 
-public class PlanetWGEN extends CommonPlugin{
+public class PlanetWGEN extends CommonPlugin implements Listener{
 	private static final int LOADER_THREAD_COUNT = 8;
-	
 
 	@Override
 	@UnsafeMethod
@@ -85,13 +84,12 @@ public class PlanetWGEN extends CommonPlugin{
 		final CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
 		final RootCommand root = getEngine().getRootCommand();
 		root.addSubCommands(this, DebugCommands.class, commandRegFactory);
-		
+
 		getLogger().info("Enabled.");
-		
-		//VanillaPlugin vanilla = (VanillaPlugin) this.getEngine().getPluginManager().getPlugin("Vanilla");
-		World world = this.getEngine().loadWorld("world", new Planetgenerator());
-		
-		WorldConfigurationNode worldNode = VanillaConfiguration.WORLDS.get("world");
+
+		World world = this.getEngine().loadWorld("world_test", new Planetgenerator());
+
+		WorldConfigurationNode worldNode = VanillaConfiguration.WORLDS.get("world_test");
 		try {
 			worldNode.load();
 		} catch (ConfigurationException e1) {
@@ -102,8 +100,8 @@ public class PlanetWGEN extends CommonPlugin{
 		world.getDataMap().put(VanillaData.DIFFICULTY, Difficulty.get(worldNode.DIFFICULTY.getString()));
 		world.getDataMap().put(VanillaData.DIMENSION, Dimension.get(worldNode.SKY_TYPE.getString()));
 
-		world.addLightingManager(VanillaLighting.BLOCK_LIGHT);
-		world.addLightingManager(VanillaLighting.BLOCK_LIGHT);
+		//world.addLightingManager(VanillaLighting.BLOCK_LIGHT);
+		//world.addLightingManager(VanillaLighting.SKY_LIGHT);
 		
 		this.getEngine().setDefaultWorld(world);
 		
@@ -144,10 +142,11 @@ public class PlanetWGEN extends CommonPlugin{
 		}
 		world.getComponentHolder().add(NormalSky.class);
 		
+		getEngine().getEventManager().registerEvents(this, this);
 	}
-	
+
 	public void onLoad(){
-		((PluginLogger) getLogger()).setTag(new ChatArguments(ChatStyle.RESET, "[", ChatStyle.GOLD, "UltraWGEN", ChatStyle.RESET, "] "));
+		((PluginLogger) getLogger()).setTag(new ChatArguments(ChatStyle.RESET, "[", ChatStyle.GOLD, "PlanetWGEN", ChatStyle.RESET, "] "));
 		//Remove bedrock from vanilla here
 		//NetherGenerator.HEIGHT = 256;
 		//GeneratorPopulator[] populators = VanillaGenerators.NORMAL.getGeneratorPopulators();
@@ -156,14 +155,15 @@ public class PlanetWGEN extends CommonPlugin{
 	@Override
 	@UnsafeMethod
 	public void onDisable() {
-		// TODO Auto-generated method stub
-		
+		getLogger().info("Disabled.");
 	}
-	
 
-	
 	public ChatArguments getPrefix() {
 		return ((PluginLogger) getLogger()).getTag();
 	}
 
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		event.getPlayer().teleport(getEngine().getWorld("world_test").getSpawnPoint());
+	}
 }

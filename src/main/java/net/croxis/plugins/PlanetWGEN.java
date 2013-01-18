@@ -36,6 +36,9 @@
  */
 package net.croxis.plugins;
 
+import java.util.HashSet;
+
+
 import org.spout.api.UnsafeMethod;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
@@ -86,8 +89,17 @@ public class PlanetWGEN extends CommonPlugin implements Listener{
 		root.addSubCommands(this, DebugCommands.class, commandRegFactory);
 
 		getLogger().info("Enabled.");
+		
+		Planetgenerator pg = new Planetgenerator();
+		
+		for (int x = -16; x <= 16; x++){
+			pg.unloadedChunks.put(x, new HashSet<Integer>());
+			for (int z = -16; z <= 16; z++){
+				pg.unloadedChunks.get(x).add(z);
+			}
+		}
 
-		World world = this.getEngine().loadWorld("world_test", new Planetgenerator());
+		World world = this.getEngine().loadWorld("world_test", pg);
 
 		WorldConfigurationNode worldNode = VanillaConfiguration.WORLDS.get("world_test");
 		try {

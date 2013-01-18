@@ -36,6 +36,10 @@
  */
 package net.croxis.plugins;
 
+
+import java.util.HashMap;
+import java.util.HashSet;
+
 import org.spout.api.generator.GeneratorPopulator;
 import org.spout.api.generator.Populator;
 import org.spout.api.generator.biome.BiomeSelector;
@@ -66,6 +70,9 @@ public class Planetgenerator implements VanillaGenerator{
 	int z = 0;
 	Vector3 blockSpot = new Vector3(0, 0, 0);
 	
+	//debug purposes
+	public HashMap<Integer, HashSet<Integer>> unloadedChunks = new HashMap<Integer, HashSet<Integer>>();
+	
 	//public Planetgenerator(){
 		// Precalculate max y values for a chunk
 		
@@ -79,9 +86,6 @@ public class Planetgenerator implements VanillaGenerator{
 				+ Integer.toString(chunkY) + ", "
 				+ Integer.toString(chunkZ));*/
 		
-		if (chunkZ == 6 && chunkX == 3)
-			System.out.println("Yes  3, 6 I exist");
-		
 		//if (Math.abs(chunkX) + 1 > crust * scale / 16.0)
 		//	if (Math.abs(chunkZ) + 1 > crust * scale / 16.0)
 		//		if(Math.abs(chunkY) + 1 > crust * scale / 256.0){
@@ -94,11 +98,11 @@ public class Planetgenerator implements VanillaGenerator{
 		int trueZ = 0;
 		int trueY = 0;
 		
-		for (x = 0; x < 16; x++){
-			for (z = 0; z < 16; z++){
-				for (y = 0; y < 256; y++){
-					
-					//System.out.println("Loop coords: " + Integer.toString(x) + ", " + Integer.toString(y) + ", " + Integer.toString(z));
+		//for (x = 0; x < 16; x++){
+		for (x = 0; x < blockData.getSize().getX(); x++){
+			for (z = 0; z < blockData.getSize().getZ(); z++){
+				for (y = 0; y < blockData.getSize().getY(); y++){
+
 					trueX = x + chunkX * 16;
 					trueZ = z + chunkZ * 16;
 					trueY = y + (chunkY << 4);
@@ -116,45 +120,23 @@ public class Planetgenerator implements VanillaGenerator{
 						blockData.set(trueX, trueY, trueZ, VanillaMaterials.DIRT);
 					else if (distance < crust * scale && distance > crust * scale - 1)
 						blockData.set(trueX, trueY, trueZ, VanillaMaterials.GRASS);
-					/*else if (chunkZ == 1 && chunkX == 0){
-						System.out.println("Error!");
-						System.out.println("Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
-						System.out.println("Loop coords: " + Integer.toString(x) + ", " + Integer.toString(y) + ", " + Integer.toString(z));
-						System.out.println("True coords: " + Integer.toString(trueX) + ", " + Integer.toString(trueY) + ", " + Integer.toString(trueZ));
-						System.out.println("Distance : " + Double.toString(distance));
-						
-					}*/
 				}
 			}
 		}
-		/*if (chunkZ == 1 && chunkX == 0){
-			System.out.println("Error!");
-			System.out.println("Chunk: " + Integer.toString(chunkX) + ", " + Integer.toString(chunkY) + ", "+ Integer.toString(chunkZ));
-			System.out.println("Loop coords: " + Integer.toString(x) + ", " + Integer.toString(y) + ", " + Integer.toString(z));
-			System.out.println("True coords: " + Integer.toString(trueX) + ", " + Integer.toString(trueY) + ", " + Integer.toString(trueZ));
-			System.out.println("Distance : " + Double.toString(distance));
-			System.out.println("Block is: " + blockData.getData(trueX, trueY, trueZ));
-			if (distance < icore * scale){
-				System.out.println("VanillaMaterials.IRON_BLOCK");
-			} else if (distance < ocore * scale && distance > icore * scale)
-				System.out.println("VanillaMaterials.LAVA");
-			else if (distance < mantle * scale && distance > ocore * scale)
-				System.out.println("VanillaMaterials.NETHERRACK");
-			else if (distance < crust - 1 * scale && distance > mantle * scale)
-				System.out.println("VanillaMaterials.STONE");
-			else if (distance < crust * scale && distance > crust -1 * scale)
-				System.out.println("VanillaMaterials.DIRT");
-			else if (distance < crust * scale && distance > crust * scale - 1)
-				System.out.println("VanillaMaterials.GRASS");
-			else
-				System.out.println("Boo");
-		}*/
 		
 		System.out.println("Generation time for Chunk: " 
 				+ Integer.toString(chunkX) + ", " 
 				+ Integer.toString(chunkY) + ", "
 				+ Integer.toString(chunkZ) + ": " 
-				+ Long.toString(System.currentTimeMillis() - time) + " ms");
+				+ Long.toString(System.currentTimeMillis() - time) + " ms. Size: "
+				+ blockData.getSize().toString());
+		
+		//We are debugging this bad boy!
+		unloadedChunks.get(chunkX).remove(chunkZ);
+		if (unloadedChunks.get(chunkX).isEmpty())
+			unloadedChunks.remove(chunkX);
+		
+		//System.out.println(unloadedChunks.toString());
 		
 	}
 
@@ -196,6 +178,7 @@ public class Planetgenerator implements VanillaGenerator{
 
 	public Point getSafeSpawn(World world) {
 		return new Point(world, 0, crust * scale + 3, 0);
+		//return new Point(world, 0, 255, 0);
 		/*short shift = 0;
 		final BiomeSelector selector = getSelector();
 		while (LogicUtil.equalsAny(selector.pickBiome(shift, 0, world.getSeed()),
